@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application for Pulping Station Licence</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      background: #f5f9f5;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    h2 {
+      color: #2c6e3c;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 5px;
+      margin-top: 30px;
+    }
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    textarea,
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    input[type="file"] {
+      margin-top: 5px;
+      padding: 8px;
+      border: 1px dashed #4CAF50;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+      width: 100%;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      width: 100%;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #3e8e41;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .required {
+      color: red;
+    }
+    .form-note {
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+      margin-top: 5px;
+    }
+    .success-message {
+      display: none;
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .error-message {
+      display: none;
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .address-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .location-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .certification-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .production-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .official-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    @media (max-width: 600px) {
+      .address-group,
+      .location-group,
+      .certification-group,
+      .production-group,
+      .official-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Application for Pulping Station Licence</h1>
+  
+  <div class="success-message" id="successMessage">
+    Your application has been submitted successfully!
+  </div>
+  
+  <div class="error-message" id="errorMessage">
+    There was an error submitting your application. Please try again.
+  </div>
+
+  <form id="pulpingForm" action="submit_pulping_station.php" method="POST" enctype="multipart/form-data">
+    <div class="section">
+      <h2>1. Applicant Information</h2>
+      
+      <label>Name of Applicant (Individual/Organization): <span class="required">*</span></label>
+      <input type="text" name="applicant_name" required>
+
+      <div class="address-group">
+        <div>
+          <label>Postal Address: <span class="required">*</span></label>
+          <input type="text" name="postal_address" required>
+        </div>
+        
+        <div>
+          <label>Postal Code: <span class="required">*</span></label>
+          <input type="text" name="postal_code" required>
+        </div>
+        
+        <div>
+          <label>Email: <span class="required">*</span></label>
+          <input type="email" name="email" required>
+        </div>
+        
+        <div>
+          <label>Telephone: <span class="required">*</span></label>
+          <input type="tel" name="telephone" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2. Location Details</h2>
+      
+      <div class="location-group">
+        <div>
+          <label>County: <span class="required">*</span></label>
+          <input type="text" name="county" value="Nyeri" readonly>
+        </div>
+        
+        <div>
+          <label>Sub-County (Constituency): <span class="required">*</span></label>
+          <select id="subCounty" name="sub_county" onchange="populateWards()" required>
+            <option value="">-- Select Sub-County --</option>
+            <option value="tetu">Tetu</option>
+            <option value="kieni_east">Kieni East</option>
+            <option value="kieni_west">Kieni West</option>
+            <option value="mathira">Mathira</option>
+            <option value="othaya">Othaya</option>
+            <option value="mukurweini">Mukurweini</option>
+            <option value="nyeri_town">Nyeri Town</option>
+          </select>
+        </div>
+        
+        <div>
+          <label>Ward: <span class="required">*</span></label>
+          <select id="ward" name="ward" required>
+            <option value="">-- Select Ward --</option>
+          </select>
+        </div>
+        
+        <div>
+          <label>Village/Road: <span class="required">*</span></label>
+          <input type="text" name="village_road" required>
+        </div>
+        
+        <div>
+          <label>Nearest Public Institution:</label>
+          <input type="text" name="nearest_institution">
+        </div>
+        
+        <div>
+          <label>Proposed Name of Farm:</label>
+          <input type="text" name="farm_name">
+        </div>
+        
+        <div>
+          <label>L.R. No: <span class="required">*</span></label>
+          <input type="text" name="lr_no" required>
+        </div>
+      </div>
+      
+      <label>Attach Supporting Document (Title deed/Lease/etc.):</label>
+      <input type="file" name="supporting_document" accept=".pdf,.jpg,.jpeg,.png">
+      <div class="form-note">Upload PDF or image file</div>
+    </div>
+
+    <div class="section">
+      <h2>3. Company/Cooperative Details (if applicable)</h2>
+      
+      <label>Certificate of Incorporation/Registration:</label>
+      <input type="file" name="certificate_of_incorporation" accept=".pdf">
+      <div class="form-note">Upload PDF document only</div>
+      
+      <label>List of Directors/Officials:</label>
+      <input type="file" name="list_of_directors" accept=".pdf">
+      <div class="form-note">Upload PDF document only</div>
+    </div>
+
+    <div class="section">
+      <h2>4. Applicant Certification</h2>
+      
+      <div class="certification-group">
+        <div>
+          <label>Name:</label>
+          <input type="text" name="cert_name1">
+        </div>
+        
+        <div>
+          <label>Signature:</label>
+          <input type="text" name="cert_signature1">
+        </div>
+        
+        <div>
+          <label>Date:</label>
+          <input type="date" name="cert_date1">
+        </div>
+      </div>
+      
+      <div class="certification-group">
+        <div>
+          <label>Name:</label>
+          <input type="text" name="cert_name2">
+        </div>
+        
+        <div>
+          <label>Signature:</label>
+          <input type="text" name="cert_signature2">
+        </div>
+        
+        <div>
+          <label>Date:</label>
+          <input type="date" name="cert_date2">
+        </div>
+      </div>
+      
+      <div class="certification-group">
+        <div>
+          <label>Name:</label>
+          <input type="text" name="cert_name3">
+        </div>
+        
+        <div>
+          <label>Signature:</label>
+          <input type="text" name="cert_signature3">
+        </div>
+        
+        <div>
+          <label>Date:</label>
+          <input type="date" name="cert_date3">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>5. Land Details</h2>
+      
+      <div class="address-group">
+        <div>
+          <label>Land under mature coffee (acreage):</label>
+          <input type="text" name="acreage">
+        </div>
+        
+        <div>
+          <label>No of Trees:</label>
+          <input type="number" name="number_of_trees">
+        </div>
+        
+        <div>
+          <label>Variety:</label>
+          <input type="text" name="variety">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>6. Production for Immediate Past Three Years</h2>
+      
+      <div class="production-group">
+        <div>
+          <label>Year 1:</label>
+          <input type="text" name="year1" placeholder="e.g., 2021">
+        </div>
+        
+        <div>
+          <label>Production (kg):</label>
+          <input type="number" name="production1">
+        </div>
+      </div>
+      
+      <div class="production-group">
+        <div>
+          <label>Year 2:</label>
+          <input type="text" name="year2" placeholder="e.g., 2022">
+        </div>
+        
+        <div>
+          <label>Production (kg):</label>
+          <input type="number" name="production2">
+        </div>
+      </div>
+      
+      <div class="production-group">
+        <div>
+          <label>Year 3:</label>
+          <input type="text" name="year3" placeholder="e.g., 2023">
+        </div>
+        
+        <div>
+          <label>Production (kg):</label>
+          <input type="number" name="production3">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>7. County Agriculture Officer's Recommendation</h2>
+      
+      <label>Recommendations:</label>
+      <textarea name="recommendation" rows="5" placeholder="Enter recommendations here..."></textarea>
+    </div>
+
+    <div class="section">
+      <h2>8. Official Use (To be filled by County Officer)</h2>
+      
+      <div class="official-group">
+        <div>
+          <label>Name:</label>
+          <input type="text" name="officer_name">
+        </div>
+        
+        <div>
+          <label>Designation:</label>
+          <input type="text" name="designation">
+        </div>
+        
+        <div>
+          <label>Signature:</label>
+          <input type="text" name="officer_signature">
+        </div>
+        
+        <div>
+          <label>Date:</label>
+          <input type="date" name="officer_date">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit">Submit Application</button>
+  </form>
+
+  <script>
+    // Ward data for Nyeri County based on IEBC boundaries
+    const wardsBySubCounty = {
+      tetu: [
+        "DEDAN KIMANTHI",
+        "WAMAGANA",
+        "AGUTHI-GAAKI"
+      ],
+      kieni_east: [
+        "NAROMORU KIAMATHAGA",
+        "THEGU RIVER",
+        "KABARU",
+        "GAKAWA"
+      ],
+      kieni_west: [
+        "MWEIGA",
+        "MWIYOGO/ENDARASHA",
+        "MUGUNDA",
+        "GATARAKWA",
+        "THEGU RIVER",
+        "KABARU",
+        "GAKAWA"
+      ],
+      mathira: [
+        "RUGURU",
+        "MAGUTU",
+        "IRIAINI",
+        "KONYU",
+        "KIRIMUKUYU",
+        "KARATINA TOWN"
+      ],
+      othaya: [
+        "MAHIGA",
+        "IRIA-INI",
+        "CHINGA",
+        "KARIMA"
+      ],
+      mukurweini: [
+        "GIKONDI",
+        "RUGI",
+        "MUKURWE-INI WEST",
+        "MUKURWE-INI CENTRAL"
+      ],
+      nyeri_town: [
+        "KIGANJO/MATHARI",
+        "RWARE",
+        "GATITU/MURUGURU",
+        "RURING'U",
+        "KAMAKWA/MUKARO"
+      ]
+    };
+
+    function populateWards() {
+      const sc = document.getElementById('subCounty').value;
+      const wardSelect = document.getElementById('ward');
+
+      // reset
+      wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+
+      if (!sc) return;
+
+      const list = wardsBySubCounty[sc];
+      if (!list) return;
+
+      list.forEach(w => {
+        const opt = document.createElement('option');
+        opt.value = w;
+        opt.textContent = w;
+        wardSelect.appendChild(opt);
+      });
+    }
+
+    // Set today's date as default for all date fields
+    function setDefaultDates() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayFormatted = `${year}-${month}-${day}`;
+      
+      // Set default for all date fields
+      const dateInputs = document.querySelectorAll('input[type="date"]');
+      dateInputs.forEach(input => {
+        input.value = todayFormatted;
+      });
+    }
+
+    // Enhanced form submission handling with AJAX
+document.getElementById("formId").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    
+    console.log("Form submission started...");
+
+    // Show loading state
+    const submitBtn = document.getElementById('submitButton') || this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    submitBtn.disabled = true;
+
+    // Hide previous messages
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
+
+    try {
+        const formData = new FormData(this);
+        console.log("Sending form data to server...");
+        
+        const response = await fetch('submit_handler.php', { // Replace with actual handler
+            method: 'POST',
+            body: formData
+        });
+        
+        console.log("Response status:", response.status);
+        const result = await response.json();
+        console.log("Server response:", result);
+        
+        if (result.success) {
+            console.log("Submission successful!");
+            
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.innerHTML = 
+                `Your application has been submitted successfully!<br>
+                 Reference Number: <strong>${result.ref_number}</strong><br>
+                 Application ID: ${result.application_id}`;
+            successMessage.style.display = 'block';
+            
+            // Reset form
+            this.reset();
+            setDefaultDates(); // If you have this function
+            
+            console.log("Form reset, redirecting in 3 seconds...");
+            
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'track.html';
+            }, 3000);
+            
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error("Submission error:", error);
+        document.getElementById('errorMessage').textContent = 
+            'Error: ' + error.message;
+        document.getElementById('errorMessage').style.display = 'block';
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+  </script>
+</body>
+</html>

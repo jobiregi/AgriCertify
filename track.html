@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Application Tracking - Nyeri County</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nyeriGreen: '#006400',
+            nyeriLightGreen: '#4caf50',
+            nyeriBrown: '#4e342e',
+            nyeriBeige: '#fdfaf6',
+            nyeriYellow: '#ffeb3b'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .status-badge {
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .application-card {
+      transition: all 0.3s ease;
+      border-left: 4px solid #006400;
+    }
+    .application-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .progress-bar {
+      height: 8px;
+      border-radius: 4px;
+      background-color: #e5e7eb;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background-color: #006400;
+      transition: width 0.5s ease-in-out;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0, 100, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: #006400;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <!-- Navbar -->
+  <nav class="bg-nyeriGreen text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <div class="h-12 w-12 rounded-full bg-white flex items-center justify-center mr-3">
+          <span class="text-nyeriGreen font-bold text-lg">NC</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">County Government Of Nyeri</h1>
+          <p class="text-sm text-gray-200">Application Tracking</p>
+        </div>
+      </div>
+      <div class="hidden md:flex space-x-6 text-sm font-semibold items-center">
+        <a href="index.html" class="hover:text-yellow-300">Home</a>
+        <a href="applicant_dashboard.html" class="hover:text-yellow-300">Apply</a>
+        <a href="track.html" class="hover:text-yellow-300 border-b-2 border-yellow-300">Track</a>
+        <a href="login.html" class="hover:text-yellow-300">Login</a>
+      </div>
+      <div class="md:hidden">
+        <button onclick="toggleMobileMenu()" class="focus:outline-none">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-nyeriGreen px-4 pb-4">
+      <a href="index.html" class="block py-2 hover:text-yellow-300">Home</a>
+      <a href="applicant_dashboard.html" class="block py-2 hover:text-yellow-300">Apply</a>
+      <a href="track.html" class="block py-2 border-l-4 border-yellow-300 pl-2 text-yellow-300">Track Applications</a>
+      <a href="login.html" class="block py-2 hover:text-yellow-300">Login</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl mx-auto py-8 px-4 w-full">
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <h2 class="text-3xl font-bold text-nyeriGreen mb-4 md:mb-0">Track Your Applications</h2>
+        <div class="flex items-center space-x-4">
+          <a href="applicant_dashboard.html" class="bg-nyeriLightGreen text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center">
+            <i class="fas fa-plus mr-2"></i>New Application
+          </a>
+        </div>
+      </div>
+      
+      <p class="mb-6 text-gray-600">Find your submitted applications by filtering with your details. No login required.</p>
+      
+      <!-- Filter Section -->
+      <div class="bg-nyeriBeige p-6 rounded-lg mb-8">
+        <h3 class="text-xl font-semibold text-nyeriGreen mb-4">Find Your Applications</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          <!-- Applicant Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name</label>
+            <input type="text" id="applicantName" placeholder="Enter your full name" class="w-full p-3 border border-gray-300 rounded-lg">
+          </div>
+          
+          <!-- Email -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" id="applicantEmail" placeholder="Enter your email" class="w-full p-3 border border-gray-300 rounded-lg">
+          </div>
+          
+          <!-- Application Type -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Application Type</label>
+            <select id="applicationType" class="w-full p-3 border border-gray-300 rounded-lg">
+              <option value="all">All Types</option>
+              <option value="coffee_nursery">Coffee Nursery Certificate</option>
+              <option value="commercial_milling">Commercial Coffee Milling</option>
+              <option value="warehouse">Warehouse Licence</option>
+              <option value="coffee_roaster">Coffee Roaster Licence</option>
+              <option value="grow_miller">Grow Miller Licence</option>
+              <option value="pulping_station">Pulping Station</option>
+              <option value="grower_notification">Grower Notification</option>
+            </select>
+          </div>
+          
+          <!-- Status -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="applicationStatus" class="w-full p-3 border border-gray-300 rounded-lg">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- Subcounty -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Subcounty</label>
+            <select id="subcounty" class="w-full p-3 border border-gray-300 rounded-lg">
+              <option value="all">All Subcounties</option>
+              <option value="Tetu">Tetu</option>
+              <option value="Kieni East">Kieni East</option>
+              <option value="Kieni West">Kieni West</option>
+              <option value="Mathira">Mathira</option>
+              <option value="Othaya">Othaya</option>
+              <option value="Mukurweini">Mukurweini</option>
+              <option value="Nyeri Town">Nyeri Town</option>
+            </select>
+          </div>
+          
+          <!-- Ward -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ward</label>
+            <select id="ward" class="w-full p-3 border border-gray-300 rounded-lg">
+              <option value="all">All Wards</option>
+            </select>
+          </div>
+          
+          <!-- Date Range -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+            <input type="date" id="dateFrom" class="w-full p-3 border border-gray-300 rounded-lg">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+            <input type="date" id="dateTo" class="w-full p-3 border border-gray-300 rounded-lg">
+          </div>
+        </div>
+        
+        <div class="flex flex-col md:flex-row gap-4 justify-end">
+          <button type="button" id="resetFilters" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition-colors">
+            <i class="fas fa-redo mr-2"></i>Reset Filters
+          </button>
+          <button type="button" id="searchApplications" class="bg-nyeriGreen text-white py-2 px-6 rounded-lg hover:bg-green-800 transition-colors">
+            <i class="fas fa-search mr-2"></i>Search Applications
+          </button>
+        </div>
+      </div>
+      
+      <!-- Loading Indicator -->
+      <div id="loadingIndicator" class="text-center py-8 hidden">
+        <div class="loading-spinner mx-auto mb-4"></div>
+        <p>Searching for your applications...</p>
+      </div>
+      
+      <!-- Applications Results -->
+      <div id="applicationsResults" class="hidden">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold text-nyeriGreen">Found Applications</h3>
+          <span id="resultsCount" class="text-sm text-gray-600"></span>
+        </div>
+        
+        <div id="applicationsList" class="space-y-4">
+          <!-- Applications will be populated here -->
+        </div>
+      </div>
+      
+      <!-- No applications found message -->
+      <div id="noApplications" class="hidden text-center py-12">
+        <div class="mb-6 text-6xl text-gray-300">
+          <i class="fas fa-file-search"></i>
+        </div>
+        <h3 class="text-2xl font-semibold text-gray-500 mb-4">No Applications Found</h3>
+        <p class="text-gray-500 mb-6">We couldn't find any applications matching your search criteria.</p>
+        <div class="space-y-4">
+          <p class="text-gray-600">Try adjusting your filters or:</p>
+          <div class="flex flex-col md:flex-row gap-4 justify-center">
+            <button id="resetAndSearch" class="bg-nyeriGreen text-white py-3 px-6 rounded-lg hover:bg-green-800 transition-colors inline-block">
+              <i class="fas fa-redo mr-2"></i>Reset Filters & Search Again
+            </button>
+            <a href="login.html" class="bg-gray-200 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors inline-block">
+              <i class="fas fa-sign-in-alt mr-2"></i>Login for More Options
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Application Detail Modal -->
+  <div id="applicationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl font-bold text-nyeriGreen">Application Details</h3>
+          <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-6" id="modalContent">
+        <!-- Application details will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white text-center py-6 mt-auto">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>&copy; 2025 County Government of Nyeri – All Rights Reserved</p>
+      <p class="text-sm text-gray-400 mt-2">Agriculture & Coffee Board Department</p>
+    </div>
+  </footer>
+
+  <script>
+    // Ward data for Nyeri County
+    const wardsBySubcounty = {
+      "Tetu": ["Aguthi-Gaaki", "Wamagana", "Dedan Kimanthi"],
+      "Kieni East": ["Naromoru Kiamathaga", "Thegu River", "Kabaru", "Gakawa"],
+      "Kieni West": ["Mweiga", "Mwiyogo/Endarasha", "Mugunda", "Gatarakwa"],
+      "Mathira": ["Ruguru", "Magutu", "Iriaini", "Konyu", "Kirimukuyu", "Karatina Town"],
+      "Othaya": ["Mahiga", "Iria-ini", "Chinga", "Karima"],
+      "Mukurweini": ["Gikondi", "Rugi", "Mukurwe-ini West", "Mukurwe-ini Central"],
+      "Nyeri Town": ["Kiganjo/Mathari", "Rware", "Gatitu/Muruguru", "Ruring'u", "Kamakwa/Mukaro"]
+    };
+
+    // Function to get CSS class for status badge
+    function getStatusClass(status) {
+      switch(status) {
+        case 'pending': return 'bg-blue-100 text-blue-800';
+        case 'under_review': return 'bg-yellow-100 text-yellow-800';
+        case 'approved': return 'bg-green-100 text-green-800';
+        case 'rejected': return 'bg-red-100 text-red-800';
+        default: return 'bg-gray-100 text-gray-800';
+      }
+    }
+
+    // Format status for display
+    function formatStatus(status) {
+      if (!status) return 'Pending';
+      return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    // Format date for display
+    function formatDate(dateString) {
+      if (!dateString) return 'Not available';
+      try {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+      } catch (e) {
+        return dateString;
+      }
+    }
+
+    // Populate wards based on selected subcounty
+    function populateWards() {
+      const subcountySelect = document.getElementById('subcounty');
+      const wardSelect = document.getElementById('ward');
+      
+      const selectedSubcounty = subcountySelect.value;
+      
+      // Clear current wards
+      wardSelect.innerHTML = '<option value="all">All Wards</option>';
+      
+      if (selectedSubcounty !== 'all' && wardsBySubcounty[selectedSubcounty]) {
+        wardsBySubcounty[selectedSubcounty].forEach(ward => {
+          const option = document.createElement('option');
+          option.value = ward;
+          option.textContent = ward;
+          wardSelect.appendChild(option);
+        });
+      }
+    }
+
+    // Search applications
+    async function searchApplications() {
+      // Gather filter values
+      const filters = {
+        applicant_name: document.getElementById('applicantName').value.trim(),
+        email: document.getElementById('applicantEmail').value.trim(),
+        application_type: document.getElementById('applicationType').value,
+        status: document.getElementById('applicationStatus').value,
+        subcounty: document.getElementById('subcounty').value,
+        ward: document.getElementById('ward').value,
+        date_from: document.getElementById('dateFrom').value,
+        date_to: document.getElementById('dateTo').value
+      };
+
+      console.log('Searching with filters:', filters);
+
+      // Show loading
+      document.getElementById('loadingIndicator').classList.remove('hidden');
+      document.getElementById('applicationsResults').classList.add('hidden');
+      document.getElementById('noApplications').classList.add('hidden');
+
+      try {
+        // Build query string
+        const params = new URLSearchParams();
+        Object.keys(filters).forEach(key => {
+          if (filters[key] && filters[key] !== 'all') {
+            params.append(key, filters[key]);
+          }
+        });
+
+        console.log('Fetching from: api/search_applications.php?' + params.toString());
+        
+        const response = await fetch('api/search_applications.php?' + params.toString());
+        const data = await response.json();
+
+        console.log('API response:', data);
+
+        document.getElementById('loadingIndicator').classList.add('hidden');
+
+        if (data.success && data.applications && data.applications.length > 0) {
+          displayApplications(data.applications);
+        } else {
+          document.getElementById('noApplications').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error searching applications:', error);
+        document.getElementById('loadingIndicator').classList.add('hidden');
+        document.getElementById('noApplications').classList.remove('hidden');
+      }
+    }
+
+    // Display applications
+    function displayApplications(applications) {
+      const applicationsList = document.getElementById('applicationsList');
+      const resultsCount = document.getElementById('resultsCount');
+      
+      applicationsList.innerHTML = '';
+      resultsCount.textContent = `${applications.length} application(s) found`;
+
+      applications.forEach(app => {
+        const progress = app.status === 'pending' ? 25 : 
+                        app.status === 'under_review' ? 50 : 
+                        app.status === 'approved' ? 100 : 
+                        app.status === 'rejected' ? 100 : 25;
+
+        const applicationCard = document.createElement('div');
+        applicationCard.className = 'application-card bg-white rounded-lg shadow p-6';
+        applicationCard.innerHTML = `
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+            <div>
+              <h3 class="text-xl font-semibold text-nyeriGreen">${app.type_name || 'Application'}</h3>
+              <p class="text-gray-600">Reference: ${app.ref_number || 'N/A'}</p>
+              <p class="text-gray-500 text-sm">Applicant: ${app.applicant_name || 'Unknown'}</p>
+            </div>
+            <span class="status-badge ${getStatusClass(app.status)} mt-2 md:mt-0">${formatStatus(app.status)}</span>
+          </div>
+          
+          <div class="mb-4">
+            <div class="progress-bar mb-2">
+              <div class="progress-fill" style="width: ${progress}%"></div>
+            </div>
+            <p class="text-sm text-gray-600">Submitted on ${formatDate(app.submitted_date)} • Last updated on ${formatDate(app.updated_date)}</p>
+          </div>
+          
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+              <p class="text-gray-700"><i class="fas fa-user-tie mr-2 text-nyeriGreen"></i> Officer: ${app.assigned_officer || 'Not assigned'}</p>
+              <p class="text-gray-700"><i class="fas fa-building mr-2 text-nyeriGreen"></i> Department: ${app.department || 'Agriculture Department'}</p>
+              <p class="text-gray-700"><i class="fas fa-map-marker-alt mr-2 text-nyeriGreen"></i> Location: ${app.sub_county || 'N/A'}, ${app.ward || 'N/A'}</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-2">
+              <button onclick="viewApplicationDetails(${app.id}, '${app.app_type}')" class="view-details bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors text-sm">
+                <i class="fas fa-eye mr-2"></i>View Details
+              </button>
+            </div>
+          </div>
+          
+          ${app.officer_notes ? `
+            <div class="mt-4 ${app.status === 'rejected' ? 'bg-red-50 border-l-4 border-red-400' : 'bg-yellow-50 border-l-4 border-yellow-400'} p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <i class="fas ${app.status === 'rejected' ? 'fa-exclamation-triangle text-red-400' : 'fa-exclamation-circle text-yellow-400'}"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm ${app.status === 'rejected' ? 'text-red-700' : 'text-yellow-700'}">
+                    <strong>Officer Notes:</strong> ${app.officer_notes}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+        `;
+        
+        applicationsList.appendChild(applicationCard);
+      });
+
+      document.getElementById('applicationsResults').classList.remove('hidden');
+    }
+
+    // View application details
+    async function viewApplicationDetails(appId, appType) {
+      try {
+        const response = await fetch(`api/get_application_details.php?id=${appId}&type=${appType}`);
+        const data = await response.json();
+        
+        if (!data.success || !data.application) {
+          alert('Application details not found');
+          return;
+        }
+        
+        const app = data.application;
+        const modalContent = document.getElementById('modalContent');
+        
+        modalContent.innerHTML = `
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-2">Application Information</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p><span class="font-medium">Reference Number:</span> ${app.ref_number || 'N/A'}</p>
+                <p><span class="font-medium">Type:</span> ${app.type_name || 'Application'}</p>
+                <p><span class="font-medium">Applicant:</span> ${app.applicant_name || 'Unknown'}</p>
+                <p><span class="font-medium">Email:</span> ${app.email || 'N/A'}</p>
+              </div>
+              <div>
+                <p><span class="font-medium">Status:</span> <span class="status-badge ${getStatusClass(app.status)}">${formatStatus(app.status)}</span></p>
+                <p><span class="font-medium">Submitted:</span> ${formatDate(app.submitted_date || app.created_at)}</p>
+                <p><span class="font-medium">Last Updated:</span> ${formatDate(app.updated_date || app.submitted_date || app.created_at)}</p>
+              </div>
+            </div>
+          </div>
+          
+          ${app.officer_notes ? `
+            <div class="mb-6 ${app.status === 'rejected' ? 'bg-red-50 border-l-4 border-red-400' : 'bg-yellow-50 border-l-4 border-yellow-400'} p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <i class="fas ${app.status === 'rejected' ? 'fa-exclamation-triangle text-red-400' : 'fa-exclamation-circle text-yellow-400'}"></i>
+                </div>
+                <div class="ml-3">
+                  <h4 class="text-lg font-semibold ${app.status === 'rejected' ? 'text-red-800' : 'text-yellow-800'}">
+                    ${app.status === 'rejected' ? 'Application Rejected' : 'Officer Notes'}
+                  </h4>
+                  <p class="text-sm ${app.status === 'rejected' ? 'text-red-700' : 'text-yellow-700'} mt-1">
+                    ${app.officer_notes}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+          
+          <div class="flex justify-end space-x-3 pt-4 border-t">
+            <button onclick="closeModal()" class="bg-gray-200 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">
+              Close
+            </button>
+          </div>
+        `;
+        
+        document.getElementById('applicationModal').classList.remove('hidden');
+      } catch (error) {
+        console.error('Error loading application details:', error);
+        alert('Error loading application details');
+      }
+    }
+
+    // Reset filters
+    function resetFilters() {
+      document.getElementById('applicantName').value = '';
+      document.getElementById('applicantEmail').value = '';
+      document.getElementById('applicationType').value = 'all';
+      document.getElementById('applicationStatus').value = 'all';
+      document.getElementById('subcounty').value = 'all';
+      document.getElementById('ward').innerHTML = '<option value="all">All Wards</option>';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      
+      document.getElementById('applicationsResults').classList.add('hidden');
+      document.getElementById('noApplications').classList.add('hidden');
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('applicationModal').classList.add('hidden');
+    }
+
+    // Navigation functions
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set today's date as default for "To Date"
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateTo').value = today;
+      
+      // Set up event listeners
+      document.getElementById('subcounty').addEventListener('change', populateWards);
+      document.getElementById('searchApplications').addEventListener('click', searchApplications);
+      document.getElementById('resetFilters').addEventListener('click', resetFilters);
+      document.getElementById('resetAndSearch').addEventListener('click', function() {
+        resetFilters();
+        searchApplications();
+      });
+      
+      // Close modal when clicking outside
+      document.getElementById('applicationModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+      });
+
+      // Auto-search when page loads with common name like "Elizabeth"
+      setTimeout(() => {
+        document.getElementById('applicantName').value = 'Elizabeth';
+        searchApplications();
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

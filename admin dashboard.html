@@ -1,0 +1,136 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #333; color: #fff;
+      padding: 1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header button {
+      background: #f44336; border: none;
+      color: white; padding: 10px 15px;
+      cursor: pointer;
+    }
+    nav {
+      display: flex; background: #555;
+    }
+    nav button {
+      flex: 1; padding: 1em;
+      background: #555; color: white;
+      border: none; cursor: pointer;
+    }
+    nav button.active {
+      background: #222;
+    }
+    section {
+      display: none; padding: 2em;
+    }
+    section.active {
+      display: block;
+    }
+    .card {
+      background: white;
+      padding: 1em;
+      margin: 1em 0;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  if (localStorage.getItem('adminLoggedIn') !== 'true') {
+    window.location.href = 'admin dashboard.html';
+  }
+  function logout() {
+    localStorage.removeItem('adminLoggedIn');
+    window.location.href = 'index.html';
+  }
+</script>
+
+<header>
+  <h1>Admin Dashboard</h1>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<nav>
+  <button class="tab-btn active" data-tab="analysis">Analysis & Reports</button>
+  <button class="tab-btn" data-tab="applications">User Applications</button>
+  <button class="tab-btn" data-tab="approvals">Approvals</button>
+  <button class="tab-btn" data-tab="settings">System Settings</button>
+</nav>
+
+<main>
+  <section id="analysis" class="active">
+    <h2>Analysis & Reports</h2>
+    <div class="card"><h3>Total Applications: 1200</h3></div>
+    <div class="card"><h3>Approved: 800 | Rejected: 200 | Pending: 200</h3></div>
+    <div class="card"><h3>Growth (Monthly): +12%</h3></div>
+    <div class="card"><h3>[Charts: Line, Pie, Bar]</h3></div>
+    <div class="card"><h3>Filter By: [Date Range, Type]</h3></div>
+    <div class="card"><h3>Export Options: [CSV, PDF, Print]</h3></div>
+    <div class="card"><h3>Custom Report Generator</h3></div>
+    <div class="card"><h3>Audit Logs</h3></div>
+  </section>
+
+  <section id="applications">
+    <h2>User Applications</h2>
+    <div class="card"><h3>Application Table View</h3></div>
+    <div class="card"><h3>Search / Filter Options</h3></div>
+    <div class="card"><h3>Detailed View (Modal)</h3></div>
+    <div class="card"><h3>Bulk Actions</h3></div>
+    <div class="card"><h3>Pagination & Sorting</h3></div>
+  </section>
+
+  <section id="approvals">
+    <h2>Approvals</h2>
+    <div class="card"><h3>Pending Approvals List</h3></div>
+    <div class="card"><h3>Approve / Reject / Assign</h3></div>
+    <div class="card"><h3>Review Panel</h3></div>
+    <div class="card"><h3>Approval History</h3></div>
+    <div class="card"><h3>Status Filters</h3></div>
+    <div class="card"><h3>Notifications</h3></div>
+  </section>
+
+  <section id="settings">
+    <h2>System Settings</h2>
+    <div class="card"><h3>User Management</h3></div>
+    <div class="card"><h3>Configuration Settings</h3></div>
+    <div class="card"><h3>System Preferences</h3></div>
+    <div class="card"><h3>Security Settings</h3></div>
+    <div class="card"><h3>Backup & Restore</h3></div>
+    <div class="card"><h3>Logs & Activity Tracker</h3></div>
+  </section>
+</main>
+
+<script>
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('main section');
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      sections.forEach(sec => sec.classList.remove('active'));
+
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

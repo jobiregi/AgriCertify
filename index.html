@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriCertify - Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body>
+<body class="bg-[url('picture.webp')] bg-cover bg-center text-gray-800 min-h-screen flex flex-col"><
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <img src="agriculture logo.jpg" alt="County Logo" class="w-11 h-11 object-contain" />
+      <div class="text-3xl font-extrabold text-green-700">AgriCertify</div>
+    </div>
+    <div class="space-x-6 text-lg">
+      <a href="index.html" class="text-green-700 hover:underline font-medium">Home</a>
+      <a href="register.html" class="hover:underline text-green-700 font-medium">Register</a>
+      <a href="login.html" class="hover:underline text-green-700 font-medium">Login</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="text-center py-32 px-4 bg-cover bg-center bg-no-repeat relative rounded-b-3xl shadow-inner" style="background-image: url('hero-bg.jpg');">
+    <div class="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-b-3xl"></div>
+    <div class="relative z-10">
+      <h1 class="text-5xl font-bold text-green-900 mb-6">Welcome to AgriCertify🍃</h1>
+      <p class="text-xl text-gray-700 max-w-3xl mx-auto">
+        Empowering farmers and producers with digital certification tools. Start your journey toward compliance, recognition, and growth in modern agriculture.
+      </p>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-10 px-6 py-20 max-w-6xl mx-auto">
+    <!-- Coffee Certification Card -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transform transition duration-300 border-t-4 border-green-600">
+      <div class="flex items-center gap-3 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 12h3v7h7v-3h2v3h7v-7h3z" />
+        </svg>
+        <h2 class="text-2xl font-bold text-green-800">Coffee Certification</h2>
+      </div>
+      <p class="text-gray-600 text-lg mb-6">
+        Get certified to operate a compliant coffee nursery and contribute to quality coffee farming practices.
+      </p>
+      <a href="about coffee certification.html" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-base font-medium transition">
+        Explore Coffee Certification
+      </a>
+    </div>
+
+    <!-- Dairy Certification Card -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transform transition duration-300 border-t-4 border-green-600">
+      <div class="flex items-center gap-3 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <h2 class="text-2xl font-bold text-green-800">Dairy Certification</h2>
+      </div>
+      <p class="text-gray-600 text-lg mb-6">
+        Ensure your dairy production complies with the latest health, safety, and quality standards.
+      </p>
+      <a href="dairy-certification.php" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-base font-medium transition">
+        Explore Dairy Certification
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-500 text-sm py-6 border-t">
+    &copy; 2025 AgriCertify. All rights reserved.
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coffee Growers Notification Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      background: #f5f9f5;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    h3 {
+      color: #2c6e3c;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 5px;
+    }
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    input[type="file"] {
+      margin-top: 5px;
+      padding: 8px;
+      border: 1px dashed #4CAF50;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+      width: 100%;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      margin: 10px 0;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      width: 100%;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #3e8e41;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .required {
+      color: red;
+    }
+    .form-note {
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+      margin-top: 5px;
+    }
+    .success-message {
+      display: none;
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .error-message {
+      display: none;
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .location-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    @media (max-width: 600px) {
+      .location-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <!-- Add Font Awesome for spinner -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <h2>Coffee Growers Notification to County Government and DSS Provider</h2>
+  
+  <div class="success-message" id="successMessage">
+    Your notification has been submitted successfully!
+  </div>
+  
+  <div class="error-message" id="errorMessage">
+    There was an error submitting your notification. Please try again.
+  </div>
+
+  <form id="growerForm" method="POST" enctype="multipart/form-data">
+    <div class="section">
+      <h3>1. Grower Information</h3>
+      
+      <label>Name of the grower: <span class="required">*</span></label>
+      <input type="text" name="grower_name" required>
+
+      <label>Grower Code: <span class="required">*</span></label>
+      <input type="text" name="grower_code" required>
+
+      <label>Category of grower: <span class="required">*</span></label>
+      <div class="checkbox-group">
+        <label><input type="radio" name="category" value="cooperative" required> Cooperative</label>
+        <label><input type="radio" name="category" value="association"> Association</label>
+        <label><input type="radio" name="category" value="estate"> Estate</label>
+        <label><input type="radio" name="category" value="other"> Other</label>
+      </div>
+      <input type="text" name="other_category" placeholder="Specify other category">
+    </div>
+
+    <div class="section">
+      <h3>2. Location Details</h3>
+      <div class="location-group">
+        <div>
+          <label>County: <span class="required">*</span></label>
+          <input type="text" name="county" value="Nyeri" readonly>
+        </div>
+        
+        <div>
+          <label>Sub-County (Constituency): <span class="required">*</span></label>
+          <select id="subCounty" name="sub_county" required>
+            <option value="">-- Select Sub-County --</option>
+            <option value="tetu">Tetu</option>
+            <option value="kieni_east">Kieni East</option>
+            <option value="kieni_west">Kieni West</option>
+            <option value="mathira">Mathira</option>
+            <option value="othaya">Othaya</option>
+            <option value="mukurweini">Mukurweini</option>
+            <option value="nyeri_town">Nyeri Town</option>
+          </select>
+        </div>
+        
+        <div>
+          <label>Ward: <span class="required">*</span></label>
+          <select id="ward" name="ward" required>
+            <option value="">-- Select Ward --</option>
+          </select>
+        </div>
+        
+        <div>
+          <label>Village/Road:</label>
+          <input type="text" name="village_road">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>3. Contact Information</h3>
+      
+      <label>Postal Address:</label>
+      <input type="text" name="postal_address">
+
+      <label>Email:</label>
+      <input type="email" name="email">
+
+      <label>Mobile Number: <span class="required">*</span></label>
+      <input type="tel" name="mobile" required>
+    </div>
+
+    <div class="section">
+      <h3>4. Change of Acreage</h3>
+      <label>Details of acreage changes:</label>
+      <textarea name="acreage_details" rows="4" placeholder="Please provide details of any changes to coffee acreage..."></textarea>
+      
+      <label>Attach supporting documents (if any):</label>
+      <input type="file" name="acreage_documents">
+      <div class="form-note">Upload PDF documents only</div>
+    </div>
+
+    <div class="section">
+      <h3>5. Contracts of Service Attached (Direct Settlement System)</h3>
+      
+      <label>(i) Contract details:</label>
+      <input type="text" name="contract1">
+      <label>Attach contract documents:</label>
+      <input type="file" name="contract_documents">
+      <div class="form-note">Upload PDF documents only</div>
+    </div>
+
+    <div class="section">
+      <h3>6. Outstanding Liabilities through DSS</h3>
+      
+      <label>(i) Liability details:</label>
+      <input type="text" name="liability1">
+      
+      <label>(ii) Liability details:</label>
+      <input type="text" name="liability2">
+      
+      <label>(iii) Liability details:</label>
+      <input type="text" name="liability3">
+      
+      <label>Attach liability statements:</label>
+      <input type="file" name="liability_documents">
+      <div class="form-note">Upload PDF documents only</div>
+    </div>
+
+    <div class="section">
+      <h3>7. Prepared by</h3>
+      
+      <label>Name: <span class="required">*</span></label>
+      <input type="text" name="prepared_by" required>
+      
+      <label>Designation: <span class="required">*</span></label>
+      <input type="text" name="designation" required>
+      
+      <label>Signature (type full name): <span class="required">*</span></label>
+      <input type="text" name="signature" required>
+      
+      <label>Date: <span class="required">*</span></label>
+      <input type="date" name="date" id="dateField" required>
+      
+      <label>Stamp (if applicable):</label>
+      <input type="text" name="stamp">
+    </div>
+
+    <button type="submit" id="submitButton">Submit Notification</button>
+  </form>
+
+  <script>
+    // Ward data for Nyeri County
+    const wardsBySubCounty = {
+      tetu: [
+        "DEDAN KIMANTHI",
+        "WAMAGANA",
+        "AGUTHI-GAAKI"
+      ],
+      kieni_east: [
+        "NAROMORU KIAMATHAGA",
+        "THEGU RIVER",
+        "KABARU",
+        "GAKAWA"
+      ],
+      kieni_west: [
+        "MWIYOGO/ENDARASHA",
+        "MUGUNDA",
+        "GATARAKWA"
+      ],
+      mathira: [
+        "RUGURU",
+        "MAGUTU",
+        "IRIAINI",
+        "KONYU",
+        "KIRIMUKUYU",
+        "KARATINA TOWN"
+      ],
+      othaya: [
+        "MAHIGA",
+        "IRIA-INI",
+        "CHINGA",
+        "KARIMA"
+      ],
+      mukurweini: [
+        "GIKONDI",
+        "RUGI",
+        "MUKURWE-INI WEST",
+        "MUKURWE-INI CENTRAL"
+      ],
+      nyeri_town: [
+        "KIGANJO/MATHARI",
+        "RWARE",
+        "GATITU/MURUGURU",
+        "RURING'U",
+        "KAMAKWA/MUKARO"
+      ]
+    };
+
+    // Set up sub-county change event
+    document.getElementById('subCounty').addEventListener('change', function() {
+      const subCounty = this.value;
+      const wardSelect = document.getElementById('ward');
+      
+      // Clear previous options
+      wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+      
+      // Add new ward options
+      if (subCounty && wardsBySubCounty[subCounty]) {
+        wardsBySubCounty[subCounty].forEach(ward => {
+          const option = document.createElement('option');
+          option.value = ward;
+          option.textContent = ward;
+          wardSelect.appendChild(option);
+        });
+      }
+    });
+
+    // Set today's date as default
+    function setDefaultDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayFormatted = `${year}-${month}-${day}`;
+      
+      const dateInput = document.getElementById('dateField');
+      if (dateInput) {
+        dateInput.value = todayFormatted;
+      }
+    }
+
+    // Enhanced form submission handling with AJAX
+document.getElementById("formId").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    
+    console.log("Form submission started...");
+
+    // Show loading state
+    const submitBtn = document.getElementById('submitButton') || this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    submitBtn.disabled = true;
+
+    // Hide previous messages
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
+
+    try {
+        const formData = new FormData(this);
+        console.log("Sending form data to server...");
+        
+        const response = await fetch('submit_handler.php', { // Replace with actual handler
+            method: 'POST',
+            body: formData
+        });
+        
+        console.log("Response status:", response.status);
+        const result = await response.json();
+        console.log("Server response:", result);
+        
+        if (result.success) {
+            console.log("Submission successful!");
+            
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.innerHTML = 
+                `Your application has been submitted successfully!<br>
+                 Reference Number: <strong>${result.ref_number}</strong><br>
+                 Application ID: ${result.application_id}`;
+            successMessage.style.display = 'block';
+            
+            // Reset form
+            this.reset();
+            setDefaultDates(); // If you have this function
+            
+            console.log("Form reset, redirecting in 3 seconds...");
+            
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'track.html';
+            }, 3000);
+            
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error("Submission error:", error);
+        document.getElementById('errorMessage').textContent = 
+            'Error: ' + error.message;
+        document.getElementById('errorMessage').style.display = 'block';
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+    // Initialize on page load
+    document.addEventListener("DOMContentLoaded", function() {
+      setDefaultDate();
+      console.log("Grower notification form loaded successfully");
+    });
+  </script>
+</body>
+</html>
